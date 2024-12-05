@@ -1,6 +1,65 @@
 import tkinter as tk
+from tkinter import messagebox
+import sqlite3
 
-# Crear ventana principal
+
+# Función para conectar a la base de datos
+def conectar():
+    return sqlite3.connect("C:/Users/manuc/OneDrive/Documentos/UMA/Curso3/GestionInformacion/TrabajoGestion/TrabajoGestion/tallerDB.db")
+
+
+# Función para validar el login con base de datos
+def validar_login():
+    usuario = tbUsuario.get().strip()
+    password = tbPassword.get().strip()
+
+    # Validación simple: Comprobar si las credenciales existen en la base de datos
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    try:
+        # Comprobar si el usuario existe y la contraseña es correcta
+        cursor.execute("SELECT password, rolName FROM tUsuario WHERE nombre = ?", (usuario,))
+        result = cursor.fetchone()
+
+        if result:
+            db_password, rol_name = result
+            if db_password == password:
+                messagebox.showinfo("Login Exitoso", "¡Bienvenido!")
+                login.destroy()  # Cierra la ventana de login
+                abrir_pantalla_principal(rol_name)  # Llama a la función para abrir la ventana principal
+            else:
+                messagebox.showerror("Error", "Contraseña incorrecta.")
+        else:
+            messagebox.showerror("Error", "Usuario no encontrado.")
+
+    except sqlite3.Error as e:
+        messagebox.showerror("Error", f"Error en la base de datos: {e}")
+
+    finally:
+        conexion.close()
+
+
+# Función para abrir la pantalla principal
+def abrir_pantalla_principal(rol_name):
+    piezas_taller = tk.Tk()
+    piezas_taller.title("Piezas Taller")
+    piezas_taller.geometry("700x500")
+    piezas_taller.resizable(False, False)
+
+    # Aquí puedes gestionar la visibilidad de los permisos según el rol del usuario
+    lbRol = tk.Label(piezas_taller, text=f"Bienvenido, Rol: {rol_name}")
+    lbRol.place(x=50, y=50)
+
+    # Resto de widgets para la ventana principal...
+    lbMaterial = tk.Label(piezas_taller, text="Material")
+    lbMaterial.place(x=100, y=100)
+
+    # Iniciar loop principal de la ventana principal
+    piezas_taller.mainloop()
+
+
+# Crear la ventana de login
 login = tk.Tk()
 login.title("Login")
 login.geometry("450x300")
@@ -21,13 +80,13 @@ lbPassword.grid(row=2, column=0, padx=10, pady=10, sticky='w')
 tbPassword = tk.Entry(login, font=('Roboto', 15), show="*")
 tbPassword.grid(row=2, column=1, padx=10, pady=10)
 
-# Botón OK (moverlo más a la derecha)
-bOK = tk.Button(login, text="OK", font=('Roboto', 15), width=10)
-bOK.grid(row=3, column=0, padx=30, pady=20)  # Incrementado el padx
+# Botón OK (para iniciar sesión)
+bOK = tk.Button(login, text="OK", font=('Roboto', 15), width=10, command=validar_login)
+bOK.grid(row=3, column=0, padx=30, pady=20)
 
-# Botón Cancel (moverlo más a la derecha)
-bCancel = tk.Button(login, text="Cancel", font=('Roboto', 15), width=10)
-bCancel.grid(row=3, column=1, padx=30, pady=20)  # Incrementado el padx
+# Botón Cancel
+bCancel = tk.Button(login, text="Cancel", font=('Roboto', 15), width=10, command=login.quit)
+bCancel.grid(row=3, column=1, padx=30, pady=20)
 
 # Iniciar el bucle principal
 login.mainloop()
