@@ -1,12 +1,22 @@
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
+import sys
+
+# Obtener el rol desde los argumentos del sistema (pasado desde login.py)
+rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
+
 
 def conectar():
-    return sqlite3.connect("C:/Users/manuc/OneDrive/Documentos/UMA/Curso3/GestionInformacion/TrabajoGestion/TrabajoGestion/tallerDB.db")
+    return sqlite3.connect(
+        "C:/Users/manuc/OneDrive/Documentos/UMA/Curso3/GestionInformacion/TrabajoGestion/TrabajoGestion/tallerDB.db")
 
 
 def insertar():
+    if rol_name != "Administrador":
+        print("Acción no permitida para este rol.")
+        return
+
     # Obtener los valores de las cajas de texto
     nombre = tbNombre.get().strip()
     fabricante = tbFabricante.get().strip()
@@ -47,7 +57,12 @@ def insertar():
         conexion.commit()
         print(f"Pieza '{nombre}' insertada correctamente con ID_TIPO '{id_tipo}'.")
 
+        # Limpiar los campos de entrada (Entry)
+        tbNombre.delete(0, tk.END)
+        tbFabricante.delete(0, tk.END)
 
+        # Recargar los productos para actualizar la tabla
+        cargar_productos(None)  # Ningún evento, solo actualiza la tabla con los nuevos productos.
 
     except Exception as e:
         print(f"Error al insertar los datos: {e}")
@@ -56,7 +71,12 @@ def insertar():
     finally:
         conexion.close()
 
+
 def borrar():
+    if rol_name != "Administrador":
+        print("Acción no permitida para este rol.")
+        return
+
     # Obtener el elemento seleccionado en el Treeview
     selected_item = tabla.selection()
     if not selected_item:
@@ -91,6 +111,10 @@ def borrar():
 
 
 def actualizar():
+    if rol_name != "Administrador":
+        print("Acción no permitida para este rol.")
+        return
+
     # Obtener el elemento seleccionado en el Treeview
     selected_item = tabla.selection()
     if not selected_item:
@@ -144,7 +168,9 @@ def actualizar():
         # Actualizar los datos en el Treeview
         tabla.item(selected_item, values=(id_seleccionado, nombre, fabricante, id_tipo))
 
-
+        # Limpiar los campos de texto
+        tbNombre.delete(0, tk.END)
+        tbFabricante.delete(0, tk.END)
 
     except Exception as e:
         print(f"Error al actualizar los datos: {e}")
@@ -161,8 +187,10 @@ def limpiar():
     for item in tabla.get_children():
         tabla.delete(item)  # Borra cada fila en la tabla
 
+
 def salir():
     PiezasTaller.destroy()
+
 
 def cargar_materiales():
     # Conexión a la base de datos
@@ -182,49 +210,62 @@ def cargar_materiales():
 
     conexion.close()
 
-# Llamar a la función para cargar materiales al inicio
 
-# Función para rellenar los campos de texto al seleccionar una fila
-def seleccionar_fila(event):
-    selected_item = tabla.selection()  # Obtener la selección
-    if selected_item:
-        # Obtener los valores de la fila seleccionada
-        valores = tabla.item(selected_item, "values")
-        tbNombre.delete(0, tk.END)  # Limpiar el campo de texto "Nombre"
-        tbNombre.insert(0, valores[1])  # Insertar el valor del nombre
-        tbFabricante.delete(0, tk.END)  # Limpiar el campo de texto "Fabricante"
-        tbFabricante.insert(0, valores[2])  # Insertar el valor del fabricante
+def cargar_productos(event):
+    # Limpiar los campos de texto
+    tbNombre.delete(0, tk.END)
+    tbFabricante.delete(0, tk.END)
 
-def mostrar_componentes(event):
-    # Obtener el material seleccionado en el Listbox
-    seleccionado = lbMateriales.curselection()
-    if seleccionado:
-        item = lbMateriales.get(seleccionado[0])
-        print(f"Elemento seleccionado: {item}")
+    # Si no se ha seleccionado un material, cargar todos los productos
+    material_seleccionado = lbMateriales.get(lbMateriales.curselection()) if lbMateriales.curselection() else None
 
-        # Conectar a la base de datos
-        conexion = conectar()
-        cursor = conexion.cursor()
+    # Conexión a la base de datos
+    conexion = conectar()
+    cursor = conexion.cursor()
 
-        # Consultar los componentes asociados a ese material
+    if material_seleccionado:
+        # Consultar los productos de la tabla tPieza basados en el material seleccionado
         cursor.execute("""
-            SELECT p.ID, p.NOMBRE, p.FABRICANTE, p.ID_TIPO
-            FROM tPiezas p
-            JOIN tTipoPieza t ON p.ID_TIPO = t.ID_TIPO
-            WHERE t.NOMBRE = ?
-        """, (item,))
+            SELECT P.ID, P.NOMBRE, P.FABRICANTE, P.ID_TIPO
+            FROM tPiezas P
+            JOIN tTipoPieza T ON P.ID_TIPO = T.ID_TIPO
+            WHERE T.NOMBRE = ?
+        """, (material_seleccionado,))
+    else:
+        # Si no hay material seleccionado, cargar todos los productos
+        cursor.execute("""
+            SELECT P.ID, P.NOMBRE, P.FABRICANTE, P.ID_TIPO
+            FROM tPiezas P
+        """)
 
-        componentes = cursor.fetchall()
+    productos = cursor.fetchall()
 
-        # Limpiar el Treeview antes de agregar nuevos datos
-        for row in tabla.get_children():
-            tabla.delete(row)
+    # Limpiar la tabla antes de insertar nuevos datos
+    for item in tabla.get_children():
+        tabla.delete(item)
 
-        # Insertar los componentes en el Treeview
-        for componente in componentes:
-            tabla.insert("", tk.END, values=componente)
+    # Insertar los productos en la tabla
+    for producto in productos:
+        tabla.insert("", tk.END, values=producto)
 
-        conexion.close()
+    conexion.close()
+
+
+def mostrar_producto_seleccionado(event):
+    # Obtener el elemento seleccionado en el Treeview
+    selected_item = tabla.selection()
+    if selected_item:
+        # Obtener los datos del producto seleccionado
+        valores = tabla.item(selected_item, "values")
+        id_producto = valores[0]  # El ID está en la primera columna
+        nombre_producto = valores[1]
+        fabricante_producto = valores[2]
+
+        # Actualizar los Textboxes con los datos del producto seleccionado
+        tbNombre.delete(0, tk.END)
+        tbFabricante.delete(0, tk.END)
+        tbNombre.insert(0, nombre_producto)
+        tbFabricante.insert(0, fabricante_producto)
 
 
 # Crear ventana principal
@@ -233,16 +274,21 @@ PiezasTaller.title("Piezas Taller")
 PiezasTaller.geometry("700x500")
 PiezasTaller.resizable(False, False)
 
+# Mostrar el rol en la interfaz
+lbRol = tk.Label(PiezasTaller, text=f"Rol: {rol_name}")
+lbRol.place(x=50, y=50)
+
 # Etiqueta para "Materia"
 lbMaterial = tk.Label(PiezasTaller, text="Material")
-lbMaterial.place(x=100, y=50)  # Centrado en la parte superior
+lbMaterial.place(x=100, y=50)
 
 # Listbox para seleccionar materiales
 lbMateriales = tk.Listbox(PiezasTaller, height=5, selectmode=tk.SINGLE, exportselection=False)
 lbMateriales.place(x=250, y=40, width=200, height=100)
 cargar_materiales()
-lbMateriales.bind("<<ListboxSelect>>", mostrar_componentes)
 
+# Vincular la selección en el Listbox con la carga de productos
+lbMateriales.bind("<<ListboxSelect>>", cargar_productos)
 
 # Tabla (Treeview)
 columns = ("ID", "NOMBRE", "FABRICANTE", "ID_TIPO")
@@ -259,8 +305,8 @@ tabla.column("ID_TIPO", width=80, anchor=tk.CENTER)
 
 tabla.place(x=50, y=160, width=600, height=150)
 
-# Asociar evento de selección de fila
-tabla.bind("<<TreeviewSelect>>", seleccionar_fila)
+# Asignar evento de selección de fila en la tabla para mostrar la información en los Textboxes
+tabla.bind("<<TreeviewSelect>>", mostrar_producto_seleccionado)
 
 # Label y Textbox "Nombre"
 lbNombre = tk.Label(PiezasTaller, text="Nombre")
@@ -277,12 +323,15 @@ tbFabricante.place(x=150, y=370)
 # Botones
 btnInsertar = tk.Button(PiezasTaller, text="Insertar", command=insertar)
 btnInsertar.place(x=150, y=420, width=80, height=30)
+btnInsertar.config(state=tk.NORMAL if rol_name == "Administrador" else tk.DISABLED)
 
 btnBorrar = tk.Button(PiezasTaller, text="Borrar", command=borrar)
 btnBorrar.place(x=250, y=420, width=80, height=30)
+btnBorrar.config(state=tk.NORMAL if rol_name == "Administrador" else tk.DISABLED)
 
 btnActualizar = tk.Button(PiezasTaller, text="Actualizar", command=actualizar)
 btnActualizar.place(x=350, y=420, width=80, height=30)
+btnActualizar.config(state=tk.NORMAL if rol_name == "Administrador" else tk.DISABLED)
 
 btnLimpiar = tk.Button(PiezasTaller, text="Limpiar", command=limpiar)
 btnLimpiar.place(x=450, y=420, width=80, height=30)
@@ -290,7 +339,4 @@ btnLimpiar.place(x=450, y=420, width=80, height=30)
 btnSalir = tk.Button(PiezasTaller, text="Salir", command=salir)
 btnSalir.place(x=550, y=420, width=80, height=30)
 
-# Iniciar loop principal
 PiezasTaller.mainloop()
-
-

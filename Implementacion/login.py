@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
-
+import subprocess
 
 # Función para conectar a la base de datos
 def conectar():
@@ -25,7 +25,7 @@ def validar_login():
         if result:
             db_password, rol_name = result
             if db_password == password:
-                messagebox.showinfo("Login Exitoso", "¡Bienvenido!")
+                messagebox.showinfo("Login Exitoso", f"Bienvenido {usuario}. El rol de su cuenta es de {rol_name}")
                 login.destroy()  # Cierra la ventana de login
                 abrir_pantalla_principal(rol_name)  # Llama a la función para abrir la ventana principal
             else:
@@ -42,21 +42,18 @@ def validar_login():
 
 # Función para abrir la pantalla principal
 def abrir_pantalla_principal(rol_name):
-    piezas_taller = tk.Tk()
-    piezas_taller.title("Piezas Taller")
-    piezas_taller.geometry("700x500")
-    piezas_taller.resizable(False, False)
+    if rol_name == "Invitado":
+        messagebox.showerror("Acceso Denegado", "No tienes permiso para acceder a la sección de Piezas Taller.")
+        return  # Si el rol es "Invitado", no abrimos la pantalla principal
 
-    # Aquí puedes gestionar la visibilidad de los permisos según el rol del usuario
-    lbRol = tk.Label(piezas_taller, text=f"Bienvenido, Rol: {rol_name}")
-    lbRol.place(x=50, y=50)
-
-    # Resto de widgets para la ventana principal...
-    lbMaterial = tk.Label(piezas_taller, text="Material")
-    lbMaterial.place(x=100, y=100)
-
-    # Iniciar loop principal de la ventana principal
-    piezas_taller.mainloop()
+    # Ejecuta el archivo PiezasTaller.py, pasando el rol como argumento
+    try:
+        subprocess.run(["python", "PiezasTaller.py", rol_name])  # Pasa el rol como argumento
+    except FileNotFoundError:
+        messagebox.showerror("Error",
+                             "No se encontró el archivo 'PiezasTaller.py'. Asegúrate de que está en el mismo directorio.")
+    except Exception as e:
+        messagebox.showerror("Error", f"Ocurrió un error al abrir la ventana principal: {e}")
 
 
 # Crear la ventana de login
