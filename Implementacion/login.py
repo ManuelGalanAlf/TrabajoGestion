@@ -2,10 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 import subprocess
-
+import os
+import db_connection as DB
 # Función para conectar a la base de datos
-def conectar():
-    return sqlite3.connect("C:/Users/manuc/OneDrive/Documentos/UMA/Curso3/GestionInformacion/TrabajoGestion/TrabajoGestion/tallerDB.db")
 
 
 # Función para validar el login con base de datos
@@ -14,7 +13,7 @@ def validar_login():
     password = tbPassword.get().strip()
 
     # Validación simple: Comprobar si las credenciales existen en la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     try:

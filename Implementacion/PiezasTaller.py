@@ -2,14 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 import sys
-
+import db_connection as DB
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
 rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
 
-
-def conectar():
-    return sqlite3.connect(
-        "C:/Users/manuc/OneDrive/Documentos/UMA/Curso3/GestionInformacion/TrabajoGestion/TrabajoGestion/tallerDB.db")
 
 
 def insertar():
@@ -35,7 +31,7 @@ def insertar():
         return
 
     # Conectar a la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     try:
@@ -88,7 +84,7 @@ def borrar():
     id_seleccionado = valores[0]  # El ID está en la primera columna
 
     # Conectar a la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     try:
@@ -143,7 +139,7 @@ def actualizar():
     nombre_material = lbMateriales.get(seleccionado[0])
 
     # Conectar a la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     try:
@@ -194,7 +190,7 @@ def salir():
 
 def cargar_materiales():
     # Conexión a la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     # Consultar todos los materiales de la tabla tTipoPieza
@@ -220,7 +216,7 @@ def cargar_productos(event):
     material_seleccionado = lbMateriales.get(lbMateriales.curselection()) if lbMateriales.curselection() else None
 
     # Conexión a la base de datos
-    conexion = conectar()
+    conexion = DB.conectar()
     cursor = conexion.cursor()
 
     if material_seleccionado:
