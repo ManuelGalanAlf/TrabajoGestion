@@ -1,16 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
 import sys
-import db_connection as DB
+import DB.db_connection as DB
+from tkinter import messagebox
 
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
 try:
-    rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
+    # Intentamos acceder al primer argumento
+   rol_name = sys.argv[1]
+   print(f"El rol recibido es: {rol_name}")
 except IndexError:
+    # Si no se pasa el argumento, se captura el error IndexError
     rol_name = "Invitado"
-    print("El rol por defecto es el de invitado.")
- #   messagebox.showinfo("Login Exitoso","El rol por defecto es el de invitado.")
+    print("Rol invitado por defecto")
+    #messagebox.showinfo("Login Exitoso", "Rol invitado por defecto")
+
 
 
 def insertar():
@@ -269,6 +273,7 @@ PiezasTaller = tk.Tk()
 PiezasTaller.title("Piezas Taller")
 PiezasTaller.geometry("700x500")
 PiezasTaller.resizable(False, False)
+
 
 # Etiqueta para "Materia"
 lbMaterial = tk.Label(PiezasTaller, text="Material")

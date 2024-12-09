@@ -2,7 +2,11 @@ import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 import subprocess
-import db_connection as DB
+import os
+import DB.db_connection as DB
+
+
+# Función para conectar a la base de datos
 
 # Función para validar el login con base de datos
 def validar_login():
@@ -50,6 +54,8 @@ def abrir_pantalla_principal(rol_name):
                              "No se encontró el archivo 'PiezasTaller.py'. Asegúrate de que está en el mismo directorio.")
     except Exception as e:
         messagebox.showerror("Error", f"Ocurrió un error al abrir la ventana principal: {e}")
+
+
 
 
 # Crear la ventana de login
