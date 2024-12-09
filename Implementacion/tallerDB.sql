@@ -29,7 +29,7 @@ CREATE TABLE tRol (
 -- Crear tabla tPermiso con eliminación en cascada
 CREATE TABLE tPermiso (
     rolName VARCHAR(255) NOT NULL,
-    pantalla VARCHAR(255) NOT NULL,
+    pantalla BOOLEAN NOT NULL,
     acceso BOOLEAN NOT NULL,
     modificacion BOOLEAN NOT NULL,
     PRIMARY KEY (rolName, pantalla),
@@ -92,17 +92,10 @@ VALUES
 INSERT INTO tPermiso (rolName, pantalla, acceso, modificacion)
 VALUES
     -- Permisos para Administrador
-    ('Administrador', 'Gestion de piezas', 1, 1),
-    ('Administrador', 'Gestion de usuarios', 1, 1),
-    ('Administrador', 'Ventas', 1, 1),
-
+    ('Administrador', 1, 1, 1),
     -- Permisos para Usuario
-    ('Usuario', 'Gestion de piezas', 1, 0),
-    ('Usuario', 'Ventas', 1, 1),
-
-    -- Permisos para Invitado
-    ('Invitado', 'Gestion de piezas', 0, 0),
-    ('Invitado', 'Ventas', 0, 0);
+    ('Usuario', 1, 1, 0),
+    ('Invitado', 0, 0, 0);
 
 -- Inserción de datos en tUsuario (contraseñas iguales al nombre de usuario)
 INSERT INTO tUsuario (nombre, password, rolName)
