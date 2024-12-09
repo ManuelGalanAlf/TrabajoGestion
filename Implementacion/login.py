@@ -3,7 +3,9 @@ from tkinter import messagebox
 import sqlite3
 import subprocess
 import os
-import db_connection as DB
+import DB.db_connection as DB
+
+
 # Función para conectar a la base de datos
 
 

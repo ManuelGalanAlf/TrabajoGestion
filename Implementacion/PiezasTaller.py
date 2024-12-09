@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 import sys
-import db_connection as DB
+import DB.db_connection as DB
+
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
 rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
 
