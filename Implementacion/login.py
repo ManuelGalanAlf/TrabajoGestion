@@ -2,10 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 import subprocess
-import os
 import db_connection as DB
-# Función para conectar a la base de datos
-
 
 # Función para validar el login con base de datos
 def validar_login():

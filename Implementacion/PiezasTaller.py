@@ -1,10 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import sys
 import db_connection as DB
-# Obtener el rol desde los argumentos del sistema (pasado desde login.py)
-rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
 
+# Obtener el rol desde los argumentos del sistema (pasado desde login.py)
+try:
+    rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
+except IndexError:
+    rol_name = "Invitado"
+    print("El rol por defecto es el de invitado.")
+ #   messagebox.showinfo("Login Exitoso","El rol por defecto es el de invitado.")
 
 
 def insertar():
@@ -263,10 +269,6 @@ PiezasTaller = tk.Tk()
 PiezasTaller.title("Piezas Taller")
 PiezasTaller.geometry("700x500")
 PiezasTaller.resizable(False, False)
-
-# Mostrar el rol en la interfaz
-lbRol = tk.Label(PiezasTaller, text=f"Rol: {rol_name}")
-lbRol.place(x=50, y=50)
 
 # Etiqueta para "Materia"
 lbMaterial = tk.Label(PiezasTaller, text="Material")
