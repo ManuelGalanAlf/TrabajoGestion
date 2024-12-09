@@ -95,7 +95,7 @@ VALUES
     ('Administrador', 1, 1, 1),
     -- Permisos para Usuario
     ('Usuario', 1, 1, 0),
-    ('Invitado', 0, 0, 0);
+    ('Invitado', 1, 0, 0);
 
 -- Inserción de datos en tUsuario (contraseñas iguales al nombre de usuario)
 INSERT INTO tUsuario (nombre, password, rolName)
