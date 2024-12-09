@@ -8,7 +8,6 @@ import DB.db_connection as DB
 
 # Función para conectar a la base de datos
 
-
 # Función para validar el login con base de datos
 def validar_login():
     usuario = tbUsuario.get().strip()
@@ -57,34 +56,41 @@ def abrir_pantalla_principal(rol_name):
         messagebox.showerror("Error", f"Ocurrió un error al abrir la ventana principal: {e}")
 
 
-# Crear la ventana de login
-login = tk.Tk()
-login.title("Login")
-login.geometry("450x300")
+def main():
+    global login, tbUsuario, tbPassword
 
-# Título principal
-lbTitle = tk.Label(login, text="Bienvenido", font=('Roboto', 38, 'bold'))
-lbTitle.grid(row=0, column=0, columnspan=2, padx=20, pady=20, sticky='n')
+    # Crear la ventana de login
+    login = tk.Tk()
+    login.title("Login")
+    login.geometry("450x300")
 
-# label y textbox usuario
-lbUsuario = tk.Label(login, text="Usuario", font=('Roboto', 15))
-lbUsuario.grid(row=1, column=0, padx=10, pady=10, sticky='w')
-tbUsuario = tk.Entry(login, font=('Roboto', 15))
-tbUsuario.grid(row=1, column=1, padx=10, pady=10)
+    # Título principal
+    lbTitle = tk.Label(login, text="Bienvenido", font=('Roboto', 38, 'bold'))
+    lbTitle.grid(row=0, column=0, columnspan=2, padx=20, pady=20, sticky='n')
 
-# Etiqueta y caja de texto para Contraseña
-lbPassword = tk.Label(login, text="Password", font=('Roboto', 15))
-lbPassword.grid(row=2, column=0, padx=10, pady=10, sticky='w')
-tbPassword = tk.Entry(login, font=('Roboto', 15), show="*")
-tbPassword.grid(row=2, column=1, padx=10, pady=10)
+    # label y textbox usuario
+    lbUsuario = tk.Label(login, text="Usuario", font=('Roboto', 15))
+    lbUsuario.grid(row=1, column=0, padx=10, pady=10, sticky='w')
+    tbUsuario = tk.Entry(login, font=('Roboto', 15))
+    tbUsuario.grid(row=1, column=1, padx=10, pady=10)
 
-# Botón OK (para iniciar sesión)
-bOK = tk.Button(login, text="OK", font=('Roboto', 15), width=10, command=validar_login)
-bOK.grid(row=3, column=0, padx=30, pady=20)
+    # Etiqueta y caja de texto para Contraseña
+    lbPassword = tk.Label(login, text="Password", font=('Roboto', 15))
+    lbPassword.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+    tbPassword = tk.Entry(login, font=('Roboto', 15), show="*")
+    tbPassword.grid(row=2, column=1, padx=10, pady=10)
 
-# Botón Cancel
-bCancel = tk.Button(login, text="Cancel", font=('Roboto', 15), width=10, command=login.quit)
-bCancel.grid(row=3, column=1, padx=30, pady=20)
+    # Botón OK (para iniciar sesión)
+    bOK = tk.Button(login, text="OK", font=('Roboto', 15), width=10, command=validar_login)
+    bOK.grid(row=3, column=0, padx=30, pady=20)
 
-# Iniciar el bucle principal
-login.mainloop()
+    # Botón Cancel
+    bCancel = tk.Button(login, text="Cancel", font=('Roboto', 15), width=10, command=login.quit)
+    bCancel.grid(row=3, column=1, padx=30, pady=20)
+
+    # Iniciar el bucle principal
+    login.mainloop()
+
+# Si el script se ejecuta directamente, ejecutamos la función main
+if __name__ == "__main__":
+    main()

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import sys
 import DB.db_connection as DB
+from tkinter import messagebox
 
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
 try:
@@ -12,6 +13,7 @@ except IndexError:
     # Si no se pasa el argumento, se captura el error IndexError
     rol_name = "Invitado"
     print("Rol invitado por defecto")
+    messagebox.showinfo("El rol por defecto es el de {rol_name}.")
 
 
 
