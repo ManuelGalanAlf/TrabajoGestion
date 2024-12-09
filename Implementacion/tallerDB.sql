@@ -29,7 +29,7 @@ CREATE TABLE tRol (
 -- Crear tabla tPermiso con eliminación en cascada
 CREATE TABLE tPermiso (
     rolName VARCHAR(255) NOT NULL,
-    pantalla VARCHAR(255) NOT NULL,
+    pantalla BOOLEAN NOT NULL,
     acceso BOOLEAN NOT NULL,
     modificacion BOOLEAN NOT NULL,
     PRIMARY KEY (rolName, pantalla),
@@ -64,7 +64,7 @@ INSERT INTO tTipoPieza (ID_TIPO, NOMBRE)
 VALUES
     ('A', 'Chapa'),
     ('B', 'Motor'),
-    ('C', 'Iluminación'),
+    ('C', 'Iluminacion'),
     ('D', 'Sensores'),
     ('E', 'Cristales');
 
@@ -74,10 +74,10 @@ VALUES
     (1, 'Faros delanteros', 'SEAT', 'C'),
     (2, 'Parachoques trasero', 'Renault', 'A'),
     (3, 'Motor TSI', 'Volkswagen', 'B'),
-    (4, 'Sensor de aparcamiento', 'Citroën', 'D'),
+    (4, 'Sensor de aparcamiento', 'Citroen', 'D'),
     (5, 'Luna delantera', 'Peugeot', 'E'),
     (6, 'Bombillas luz de freno', 'Ford', 'C'),
-    (7, 'Motor diésel HDi', 'Peugeot', 'B'),
+    (7, 'Motor diesel HDi', 'Peugeot', 'B'),
     (8, 'Parachoques delantero', 'SEAT', 'A'),
     (9, 'Cristales laterales', 'Ford', 'E');
 
@@ -92,17 +92,10 @@ VALUES
 INSERT INTO tPermiso (rolName, pantalla, acceso, modificacion)
 VALUES
     -- Permisos para Administrador
-    ('Administrador', 'Gestión de piezas', 1, 1),
-    ('Administrador', 'Gestión de usuarios', 1, 1),
-    ('Administrador', 'Ventas', 1, 1),
-
+    ('Administrador', 1, 1, 1),
     -- Permisos para Usuario
-    ('Usuario', 'Gestión de piezas', 1, 0),
-    ('Usuario', 'Ventas', 1, 1),
-
-    -- Permisos para Invitado
-    ('Invitado', 'Gestión de piezas', 0, 0),
-    ('Invitado', 'Ventas', 0, 0);
+    ('Usuario', 1, 1, 0),
+    ('Invitado', 1, 0, 0);
 
 -- Inserción de datos en tUsuario (contraseñas iguales al nombre de usuario)
 INSERT INTO tUsuario (nombre, password, rolName)
