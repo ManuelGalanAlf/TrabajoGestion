@@ -9,10 +9,6 @@ rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este scri
 
 
 def insertar():
-    if rol_name != "Administrador":
-        print("Acción no permitida para este rol.")
-        return
-
     # Obtener los valores de las cajas de texto
     nombre = tbNombre.get().strip()
     fabricante = tbFabricante.get().strip()
@@ -69,10 +65,6 @@ def insertar():
 
 
 def borrar():
-    if rol_name != "Administrador":
-        print("Acción no permitida para este rol.")
-        return
-
     # Obtener el elemento seleccionado en el Treeview
     selected_item = tabla.selection()
     if not selected_item:
@@ -98,6 +90,7 @@ def borrar():
 
         tbNombre.delete(0, tk.END)
         tbFabricante.delete(0, tk.END)
+
     except Exception as e:
         print(f"Error al borrar el registro: {e}")
         conexion.rollback()
@@ -107,10 +100,6 @@ def borrar():
 
 
 def actualizar():
-    if rol_name != "Administrador":
-        print("Acción no permitida para este rol.")
-        return
-
     # Obtener el elemento seleccionado en el Treeview
     selected_item = tabla.selection()
     if not selected_item:
@@ -208,6 +197,11 @@ def cargar_materiales():
 
 
 def cargar_productos(event):
+    # Verificar el rol antes de cargar los productos
+    if rol_name == "Invitado":
+        print("Rol de invitado: no se pueden cargar los productos.")
+        return  # No cargar los productos si el rol es "Invitado"
+
     # Limpiar los campos de texto
     tbNombre.delete(0, tk.END)
     tbFabricante.delete(0, tk.END)
@@ -245,6 +239,7 @@ def cargar_productos(event):
         tabla.insert("", tk.END, values=producto)
 
     conexion.close()
+
 
 
 def mostrar_producto_seleccionado(event):
@@ -316,6 +311,11 @@ lbFabricante.place(x=50, y=370)
 tbFabricante = tk.Entry(PiezasTaller, width=40)
 tbFabricante.place(x=150, y=370)
 
+# Desactivar los Textbox si el rol no es "Administrador"
+if rol_name != "Administrador":
+    tbNombre.config(state=tk.DISABLED)
+    tbFabricante.config(state=tk.DISABLED)
+
 # Botones
 btnInsertar = tk.Button(PiezasTaller, text="Insertar", command=insertar)
 btnInsertar.place(x=150, y=420, width=80, height=30)
@@ -331,6 +331,7 @@ btnActualizar.config(state=tk.NORMAL if rol_name == "Administrador" else tk.DISA
 
 btnLimpiar = tk.Button(PiezasTaller, text="Limpiar", command=limpiar)
 btnLimpiar.place(x=450, y=420, width=80, height=30)
+btnLimpiar.config(state=tk.NORMAL if rol_name != "Invitado" else tk.DISABLED)
 
 btnSalir = tk.Button(PiezasTaller, text="Salir", command=salir)
 btnSalir.place(x=550, y=420, width=80, height=30)
