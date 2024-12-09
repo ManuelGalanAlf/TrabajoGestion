@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import sqlite3
 import sys
 import db_connection as DB
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
