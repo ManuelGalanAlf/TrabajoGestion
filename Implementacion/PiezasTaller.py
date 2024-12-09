@@ -4,7 +4,14 @@ import sys
 import DB.db_connection as DB
 
 # Obtener el rol desde los argumentos del sistema (pasado desde login.py)
-rol_name = sys.argv[1]  # El rol se pasa como un argumento al ejecutar este script
+try:
+    # Intentamos acceder al primer argumento
+   rol_name = sys.argv[1]
+   print(f"El r ol recibido es: {rol_name}")
+except IndexError:
+    # Si no se pasa el argumento, se captura el error IndexError
+    rol_name = "Invitado"
+    print("Rol invitado por defecto")
 
 
 
@@ -265,9 +272,6 @@ PiezasTaller.title("Piezas Taller")
 PiezasTaller.geometry("700x500")
 PiezasTaller.resizable(False, False)
 
-# Mostrar el rol en la interfaz
-lbRol = tk.Label(PiezasTaller, text=f"Rol: {rol_name}")
-lbRol.place(x=50, y=50)
 
 # Etiqueta para "Materia"
 lbMaterial = tk.Label(PiezasTaller, text="Material")
