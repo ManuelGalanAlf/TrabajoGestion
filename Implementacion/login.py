@@ -25,7 +25,7 @@ def validar_login():
         if result:
             db_password, rol_name = result
             if db_password == password:
-                messagebox.showinfo("Login Exitoso", f"Bienvenido {usuario}. El rol de su cuenta es de {rol_name}")
+                messagebox.showinfo("Login Exitoso", f"Bienvenido {usuario}. El rol de su cuenta es de {rol_name}.")
                 login.destroy()  # Cierra la ventana de login
                 abrir_pantalla_principal(rol_name)  # Llama a la función para abrir la ventana principal
             else:
@@ -42,9 +42,9 @@ def validar_login():
 
 # Función para abrir la pantalla principal
 def abrir_pantalla_principal(rol_name):
-    if rol_name == "Invitado":
-        messagebox.showerror("Acceso Denegado", "No tienes permiso para acceder a la sección de Piezas Taller.")
-        return  # Si el rol es "Invitado", no abrimos la pantalla principal
+    #if rol_name == "Invitado":
+     #   messagebox.showerror("Acceso Denegado", "No tienes permiso para acceder a la sección de Piezas Taller.")
+     #   return  # Si el rol es "Invitado", no abrimos la pantalla principal
 
     # Ejecuta el archivo PiezasTaller.py, pasando el rol como argumento
     try:
